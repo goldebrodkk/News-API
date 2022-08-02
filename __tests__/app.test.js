@@ -34,6 +34,23 @@ describe('GET /api/topics', () => {
     });
 });
 
+describe('GET /api/users', () => {
+    it('Status: 200 and an array of objects', () => {
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then(({ body }) => {
+            expect(Array.isArray(body)).toBe(true); 
+            expect(body).toHaveLength(4); 
+            body.forEach((user) => {
+                expect(user.username).toEqual(expect.any(String)); 
+                expect(user.name).toEqual(expect.any(String)); 
+                expect(user.avatar_url).toEqual(expect.any(String)); 
+            })
+        })
+    });
+});
+
 describe('GET api/article/:article_id', () => {
     it('Status: 200 and an object with the relevant article id', () => {
         return request(app)
