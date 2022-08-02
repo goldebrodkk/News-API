@@ -86,7 +86,7 @@ describe('PATCH /api/articles/:article_id', () => {
     it('Status: 400 and an error message if the patch request is missing the required fields', () => {
         return request(app)
         .patch('/api/articles/1')
-        .send({ inc_votes: 0 })
+        .send({other_things: "yes"})
         .expect(400)
         .then(({ body }) => {
             expect(body.msg).toBe("Missing required fields")
