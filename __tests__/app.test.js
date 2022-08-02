@@ -33,3 +33,36 @@ describe('GET /api/topics', () => {
         });
     });
 });
+
+describe('GET api/article/:article_id', () => {
+    it('Status: 200 and an object with the relevant article id', () => {
+        return request(app)
+        .get('/api/articles/1')
+        .expect(200)
+        .then(({ body }) => {
+            expect(typeof body).toBe("object"); 
+            expect(body.article_id).toBe(1); 
+            expect(body.title).toEqual('Living in the shadow of a great man'); 
+            expect(body.topic).toEqual('mitch');
+            expect(body.author).toEqual('butter_bridge'); 
+            expect(body.created_at).toEqual("2020-07-09T20:11:00.000Z"); 
+            expect(body.votes).toEqual(100); 
+        })
+    });
+    it('Status: 404 and an error message when given a valid Id that does not exist in the database', () => {
+        return request(app)
+        .get('/api/articles/1000')
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe("No article found for article_id: 1000")
+        })
+    });
+    it('Status: 400 and an error message when given an invalid id', () => {
+        return request(app)
+        .get('/api/articles/dogs')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Invalid ID"); 
+        })
+    });
+});
