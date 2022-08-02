@@ -14,4 +14,26 @@ const fetchArticleByArticleID = (id) => {
     })
 }
 
-module.exports = { fetchArticleByArticleID, }
+const patchArticleByArticleID = (article_id, inc_votes) => {
+    if (!inc_votes) {
+        return Promise.reject({
+            status: 400, 
+            msg: "Missing required fields"
+        }); 
+    } else {
+    return db.query('UPDATE articles SET votes = votes + $1 WHERE article_id = $2 returning *;', [inc_votes, article_id])
+    .then(({ rows }) => {
+        const user = rows[0]; 
+        if(!user) {
+            return Promise.reject ({
+                status: 404, 
+                msg: `No article found for article_id: ${article_id}`
+            });
+        }; 
+        return user; 
+    });  
+  }
+}
+
+module.exports = { fetchArticleByArticleID,
+                    patchArticleByArticleID, }
