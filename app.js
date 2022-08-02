@@ -1,9 +1,27 @@
 const express = require('express'); 
-const topicRouter = require('./routes/topic-router'); 
+
+const { getTopics } = require('./controllers/topic-controller'); 
+const { getArticleByArticleID } = require('./controllers/article-controller')
 
 const app = express(); 
 
-app.use('/api/topics', topicRouter); 
+app.get('/api/topics', getTopics); 
+
+app.get('/api/articles/:article_id', getArticleByArticleID); 
+
+app.use((err, req, res, next) => {
+    if (err.status && err.msg) {
+        res.status(err.status).send({ msg: err.msg }); 
+    } else {
+        next(err); 
+    }
+})
+
+app.use((err, req, res, next) => {
+    if (err.code === '22P02') {
+        res.status(400).send({ msg: "Invalid ID"})
+    }
+})
 
 app.use((req, res, next) => {
     res.status(404).send({ msg: "Invalid path"})
