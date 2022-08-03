@@ -64,6 +64,7 @@ describe('GET api/article/:article_id', () => {
             expect(body.author).toEqual('butter_bridge'); 
             expect(body.created_at).toEqual("2020-07-09T20:11:00.000Z"); 
             expect(body.votes).toEqual(100); 
+            expect(body.comment_count).toEqual(11); 
         })
     });
     it('Status: 404 and an error message when given a valid Id that does not exist in the database', () => {
@@ -88,7 +89,7 @@ describe('PATCH /api/articles/:article_id', () => {
     it('Status: 200 and a successfully updated article object', () => {
         return request(app)
         .patch('/api/articles/1')
-        .send({ inc_votes: 100})
+        .send({ inc_votes: 100 })
         .expect(200)
         .then(({ body }) => {
             expect(typeof body).toBe("object"); 

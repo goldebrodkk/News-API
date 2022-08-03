@@ -1,0 +1,6 @@
+You are now connected to database "nc_news" as user "jmk".
+       title        | topic  |  author   |     created_at      | votes | article_id | comment_count 
+--------------------+--------+-----------+---------------------+-------+------------+---------------
+ Running a Node App | coding | jessjelly | 2020-11-07 06:03:00 |     0 |          1 |             8
+(1 row)
+
