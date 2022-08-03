@@ -1,7 +1,10 @@
 const db = require('../db/connection'); 
 
 const fetchArticleByArticleID = (id) => {
-   return db.query('SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.votes, comments.article_id, (SELECT COUNT(comment_id) :: INT) AS comment_count FROM articles INNER JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id, comments.article_id', [id])
+   return db.query(`SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.votes, comments.article_id, 
+                  (SELECT COUNT(comment_id) :: INT) AS comment_count 
+                   FROM articles INNER JOIN comments ON articles.article_id = comments.article_id 
+                   WHERE articles.article_id = $1 GROUP BY articles.article_id, comments.article_id`, [id])
     .then(({ rows }) => {
         const user = rows; 
         if (!user[0]) {
