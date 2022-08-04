@@ -28,21 +28,30 @@ const fetchArticleByArticleID = (id) => {
     })
 }
 
+const checkArticleExists = (article_id) => {
+    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
+    .then(({ rows }) => {
+        if (rows.length === 0) {
+            return Promise.reject({
+                status: 404, 
+                msg: `No article found for article_id: ${article_id}`
+            })
+        }
+    })
+}
+
 const fetchCommentsByArticleID = (article_id) => {
-    return db.query(`SELECT comment_id, votes, created_at, author, body
+    return checkArticleExists(article_id).then(() => {
+        return db.query(`SELECT comment_id, votes, created_at, author, body
                      FROM comments 
                      WHERE article_id = $1`, [article_id])
     .then(({ rows }) => {
         const comments = rows; 
-        if (!comments[0]) {
-            return Promise.reject({
-                status: 404,
-                msg: `No comments found for article: ${article_id}`
-            })
-        }
         return comments; 
     })
+})
 }
+
 
 const patchArticleByArticleID = (article_id, inc_votes) => {
     if (!inc_votes) {

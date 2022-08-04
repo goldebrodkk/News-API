@@ -128,12 +128,21 @@ describe('GET /api/articles/:article_id/comments', () => {
             })
         })
     });
+    it('Status: 200 and an empty array when a valid article has no comments', () => {
+        return request(app)
+        .get('/api/articles/2/comments')
+        .expect(200)
+        .then(({ body }) => {
+            expect(Array.isArray(body)).toBe(true); 
+            expect(body).toHaveLength(0); 
+        })
+    });
     it('Status: 404 and an error message if given a valid ID that does not exist on the database', () => {
         return request(app)
         .get('/api/articles/9999/comments')
         .expect(404)
         .then(({ body }) => {
-            expect(body.msg).toBe("No comments found for article: 9999")
+            expect(body.msg).toBe("No article found for article_id: 9999")
         })
     });
     it('Status: 400 and an error message when given an invalid ID', () => {
