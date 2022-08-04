@@ -253,7 +253,7 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(body.msg).toBe("Request contains invalid type"); 
         })
     });
-    it('Status: 400 and an error message if the patch request is missing the required fields', () => {
+    it('Status: 400 and an error message if the post request is missing the required fields', () => {
         return request(app)
         .post('/api/articles/1/comments')
         .send({other_things: "yes"})
@@ -262,14 +262,14 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(body.msg).toBe("Missing required fields")
         })
     });
-    it('Status: 400 and an error message if the patch request is of the incorrect type', () => {
+    it('Status: 404 and error message if the user does not exist in the users database', () => {
         return request(app)
-        .post('/api/articles/1/comments')
-        .send({ username: 1, 
-                body: 3 })
-        .expect(400)
+        .post('/api/articles/3/comments')
+        .send({username: "Hello-friend",
+                body: "I am not a real user"})
+        .expect(404)
         .then(({ body }) => {
-            expect(body.msg).toBe("Request contains invalid type"); 
+            expect(body.msg).toBe("User not found")
         })
     });
 });
