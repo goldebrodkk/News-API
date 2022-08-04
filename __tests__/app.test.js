@@ -111,6 +111,41 @@ describe('GET api/article/:article_id', () => {
     });
 });
 
+describe('GET /api/articles/:article_id/comments', () => {
+    it('Status: 200 and an array of comment objects', () => {
+        return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then(({ body }) => {
+            expect(Array.isArray(body)).toBe(true);
+            expect(body).toHaveLength(11);
+            body.forEach((comment) => {
+                expect(comment.comment_id).toEqual(expect.any(Number));
+                expect(comment.votes).toEqual(expect.any(Number)); 
+                expect(comment.created_at).toEqual(expect.any(String));
+                expect(comment.author).toEqual(expect.any(String)); 
+                expect(comment.body).toEqual(expect.any(String)); 
+            })
+        })
+    });
+    it('Status: 404 and an error message if given a valid ID that does not exist on the database', () => {
+        return request(app)
+        .get('/api/articles/9999/comments')
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe("No comments found for article: 9999")
+        })
+    });
+    it('Status: 400 and an error message when given an invalid ID', () => {
+        return request(app)
+        .get('/api/articles/dogs/comments')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Request contains invalid type"); 
+        })
+    });
+});
+
 describe('PATCH /api/articles/:article_id', () => {
     it('Status: 200 and a successfully updated article object', () => {
         return request(app)

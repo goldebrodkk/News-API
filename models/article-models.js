@@ -2,10 +2,10 @@ const db = require('../db/connection');
 
 const fetchArticles = () => {
     return db.query(`SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_id, 
-    (SELECT COUNT(comment_id) :: INT) AS comment_count 
-    FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id 
-    GROUP BY articles.article_id
-    ORDER BY created_at DESC`)
+                    (SELECT COUNT(comment_id) :: INT) AS comment_count 
+                     FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id 
+                     GROUP BY articles.article_id
+                     ORDER BY created_at DESC`)
     .then(({ rows }) => {
         return rows;
     })
@@ -13,9 +13,9 @@ const fetchArticles = () => {
 
 const fetchArticleByArticleID = (id) => {
    return db.query(`SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.votes, comments.article_id, 
-                  (SELECT COUNT(comment_id) :: INT) AS comment_count 
-                   FROM articles INNER JOIN comments ON articles.article_id = comments.article_id 
-                   WHERE articles.article_id = $1 GROUP BY articles.article_id, comments.article_id`, [id])
+                   (SELECT COUNT(comment_id) :: INT) AS comment_count 
+                    FROM articles INNER JOIN comments ON articles.article_id = comments.article_id 
+                    WHERE articles.article_id = $1 GROUP BY articles.article_id, comments.article_id`, [id])
     .then(({ rows }) => {
         const user = rows; 
         if (!user[0]) {
@@ -25,6 +25,22 @@ const fetchArticleByArticleID = (id) => {
             })
         } 
         return user[0]; 
+    })
+}
+
+const fetchCommentsByArticleID = (article_id) => {
+    return db.query(`SELECT comment_id, votes, created_at, author, body
+                     FROM comments 
+                     WHERE article_id = $1`, [article_id])
+    .then(({ rows }) => {
+        const comments = rows; 
+        if (!comments[0]) {
+            return Promise.reject({
+                status: 404,
+                msg: `No comments found for article: ${article_id}`
+            })
+        }
+        return comments; 
     })
 }
 
@@ -51,4 +67,5 @@ const patchArticleByArticleID = (article_id, inc_votes) => {
 
 module.exports = { fetchArticleByArticleID,
                     patchArticleByArticleID,
-                    fetchArticles, }
+                    fetchArticles, 
+                    fetchCommentsByArticleID, }
