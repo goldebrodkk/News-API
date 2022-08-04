@@ -1,5 +1,16 @@
 const db = require('../db/connection'); 
 
+const fetchArticles = () => {
+    return db.query(`SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_id, 
+    (SELECT COUNT(comment_id) :: INT) AS comment_count 
+    FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id 
+    GROUP BY articles.article_id
+    ORDER BY created_at DESC`)
+    .then(({ rows }) => {
+        return rows;
+    })
+}
+
 const fetchArticleByArticleID = (id) => {
    return db.query(`SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.votes, comments.article_id, 
                   (SELECT COUNT(comment_id) :: INT) AS comment_count 
@@ -39,4 +50,5 @@ const patchArticleByArticleID = (article_id, inc_votes) => {
 }
 
 module.exports = { fetchArticleByArticleID,
-                    patchArticleByArticleID, }
+                    patchArticleByArticleID,
+                    fetchArticles, }
