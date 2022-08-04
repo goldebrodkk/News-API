@@ -2,7 +2,11 @@ const express = require('express');
 
 const { getTopics } = require('./controllers/topic-controller'); 
 const { getUsers } = require('./controllers/user-controller')
-const { getArticleByArticleID, updateArticleByArticleID, getArticles, getCommentsByArticleID} = require('./controllers/article-controller')
+const { getArticleByArticleID, 
+        updateArticleByArticleID, 
+        getArticles, 
+        getCommentsByArticleID, 
+        postCommentByArticleID, } = require('./controllers/article-controller')
 
 
 const app = express(); 
@@ -21,6 +25,8 @@ app.get('/api/articles/:article_id/comments', getCommentsByArticleID)
 
 app.patch('/api/articles/:article_id', updateArticleByArticleID)
 
+app.post('/api/articles/:article_id/comments', postCommentByArticleID) 
+
 app.use((err, req, res, next) => {
     if (err.status && err.msg) {
         res.status(err.status).send({ msg: err.msg }); 
@@ -30,8 +36,10 @@ app.use((err, req, res, next) => {
 })
 
 app.use((err, req, res, next) => {
-    if (err.code === '22P02') {
+    if (err.code === '22P02' || err.code === '23503') {
         res.status(400).send({ msg: "Request contains invalid type"})
+    } else {
+        next(err); 
     }
 })
 

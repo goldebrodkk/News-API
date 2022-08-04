@@ -4,6 +4,7 @@ const seed = require('../db/seeds/seed.js');
 const testData = require('../db/data/test-data/index.js');
 const db = require('../db/connection.js')
 require('jest-sorted'); 
+require('pg')
 
 beforeEach(() => seed(testData)); 
 afterAll(() => {db.end()}); 
@@ -202,6 +203,70 @@ describe('PATCH /api/articles/:article_id', () => {
         return request(app)
         .patch('/api/articles/dogs')
         .send({ inc_votes: 100 })
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Request contains invalid type"); 
+        })
+    });
+});
+
+describe('POST /api/articles/:article_id/comments', () => {
+    it('Status: 204 and an object containing the posted comment', () => {
+        return request(app)
+        .post('/api/articles/4/comments')
+        .send({ 
+            username: "butter_bridge", 
+            body: "This is a comment about how great this article is"
+        })
+        .expect(201)
+        .then(({ body }) => {
+            expect(typeof body).toBe("object");
+            expect(body.body).toBe("This is a comment about how great this article is");
+            expect(body.votes).toBe(0);
+            expect(body.author).toBe("butter_bridge"); 
+            expect(body.article_id).toBe(4);
+            expect(body.created_at).toEqual(expect.any(String));
+            expect(body.comment_id).toBe(19);
+        })
+    });
+    it('Status: 404 and a error message when given a valid id that is no tin the database', () => {
+        return request(app)
+        .post('/api/articles/9999/comments')
+        .send({ 
+            username: "butter_bridge", 
+            body: "This is a comment about how great this article is"
+        })
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe(`No article found for article_id: 9999`); 
+        })
+    });
+    it('Status: 400 and an error message when given an invalid id', () => {
+        return request(app)
+        .post('/api/articles/dogs/comments')
+        .send({ 
+            username: "butter_bridge", 
+            body: "This is a comment about how great this article is"
+        })
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Request contains invalid type"); 
+        })
+    });
+    it('Status: 400 and an error message if the patch request is missing the required fields', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send({other_things: "yes"})
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Missing required fields")
+        })
+    });
+    it('Status: 400 and an error message if the patch request is of the incorrect type', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send({ username: 1, 
+                body: 3 })
         .expect(400)
         .then(({ body }) => {
             expect(body.msg).toBe("Request contains invalid type"); 

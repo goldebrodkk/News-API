@@ -1,5 +1,7 @@
 const db = require('../db/connection'); 
 
+
+
 const fetchArticles = () => {
     return db.query(`SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_id, 
                     (SELECT COUNT(comment_id) :: INT) AS comment_count 
@@ -74,7 +76,25 @@ const patchArticleByArticleID = (article_id, inc_votes) => {
   }
 }
 
+const insertCommentByArticleID = (article_id, username, body) => {
+    if(!username || !body) {
+        return Promise.reject({
+            status: 400, 
+            msg: 'Missing required fields'
+        })
+    } 
+return checkArticleExists(article_id).then(() => {
+  return db.query(`INSERT INTO comments (article_id, author, body) 
+              VALUES ($1, $2, $3) RETURNING *`, [article_id, username, body])
+    .then(({ rows: [comment] }) => {
+        return comment;
+    })
+ })
+}
+
+
 module.exports = { fetchArticleByArticleID,
                     patchArticleByArticleID,
                     fetchArticles, 
-                    fetchCommentsByArticleID, }
+                    fetchCommentsByArticleID, 
+                    insertCommentByArticleID, }
