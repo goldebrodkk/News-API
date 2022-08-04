@@ -1,13 +1,6 @@
 const { fetchArticleByArticleID,
-        fetchArticles,
         patchArticleByArticleID, } = require('../models/article-models'); 
 
-const getArticles = (req, res) => {
-    fetchArticles()
-    .then((article) => {
-        res.status(200).send(article); 
-    })
-}
 
 const getArticleByArticleID = (req, res, next) => {
     const id = req.params.article_id; 
@@ -32,5 +25,4 @@ const updateArticleByArticleID = (req, res, next) => {
 }
 
 module.exports = { getArticleByArticleID,
-                   updateArticleByArticleID,
-                   getArticles, }
+                   updateArticleByArticleID, }
