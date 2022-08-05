@@ -4,7 +4,6 @@ const seed = require('../db/seeds/seed.js');
 const testData = require('../db/data/test-data/index.js');
 const db = require('../db/connection.js')
 require('jest-sorted'); 
-require('pg')
 
 beforeEach(() => seed(testData)); 
 afterAll(() => {db.end()}); 
@@ -357,6 +356,34 @@ describe('POST /api/articles/:article_id/comments', () => {
         .expect(404)
         .then(({ body }) => {
             expect(body.msg).toBe("User not found")
+        })
+    });
+});
+
+describe('DELETE /api/comments/:comment_id', () => {
+    it('Status: 204 and no content upon succesful deletion', () => {
+        return request(app)
+        .delete('/api/comments/1')
+        .expect(204)
+        .then(({ body }) => {
+            expect(typeof body).toBe('object'); 
+            expect(body).toEqual({});  
+        })
+    });
+    it('Status: 404 and an error message when given a valid id that does not exist on the database', () => {
+        return request(app)
+        .delete('/api/comments/999')
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Comment not found"); 
+        })
+    });
+    it('Status: 400 and an error message when given in invalid id', () => {
+        return request(app)
+        .delete('/api/comments/cats')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Request contains invalid type")
         })
     });
 });
