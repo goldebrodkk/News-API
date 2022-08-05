@@ -4,10 +4,15 @@ const { fetchArticleByArticleID,
         fetchCommentsByArticleID,
         insertCommentByArticleID, } = require('../models/article-models'); 
 
-const getArticles = (req, res) => {
-    fetchArticles()
+const getArticles = (req, res, next) => {
+    const { sortOn } = req.query; 
+    const { order } = req.query; 
+    const { term } = req.query; 
+    fetchArticles(sortOn, order, term)
     .then((article) => {
         res.status(200).send(article); 
+    }).catch((err) => {
+        next(err); 
     })
 }
 
