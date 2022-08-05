@@ -6,7 +6,8 @@ const { getArticleByArticleID,
         updateArticleByArticleID, 
         getArticles, 
         getCommentsByArticleID, 
-        postCommentByArticleID, } = require('./controllers/article-controller')
+        postCommentByArticleID,
+        removeCommentByCommentID, } = require('./controllers/article-controller')
 
 
 const app = express(); 
@@ -21,11 +22,13 @@ app.get('/api/articles', getArticles);
 
 app.get('/api/articles/:article_id', getArticleByArticleID); 
 
-app.get('/api/articles/:article_id/comments', getCommentsByArticleID)
+app.patch('/api/articles/:article_id', updateArticleByArticleID);
 
-app.patch('/api/articles/:article_id', updateArticleByArticleID)
+app.get('/api/articles/:article_id/comments', getCommentsByArticleID);
 
-app.post('/api/articles/:article_id/comments', postCommentByArticleID) 
+app.post('/api/articles/:article_id/comments', postCommentByArticleID);
+
+app.delete('/api/comments/:comment_id', removeCommentByCommentID);
 
 app.use((err, req, res, next) => {
     if (err.status && err.msg) {
@@ -44,7 +47,7 @@ app.use((err, req, res, next) => {
 })
 
 app.use((req, res, next) => {
-    res.status(404).send({ msg: "Invalid path"})
+    res.status(404).send({ msg: "Invalid path"});
 })
 
 module.exports = app; 
