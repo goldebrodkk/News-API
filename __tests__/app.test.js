@@ -53,7 +53,7 @@ describe('GET /api/users', () => {
 });
 
 describe('GET /api/articles', () => {
-    it('Status: 200 and an array of objects sorted by date in descending order', () => {
+    it('Status: 200 and an array of objects sorted by date in descending order when no queries are inputted', () => {
         return request(app)
         .get('/api/articles')
         .expect(200)
@@ -72,6 +72,93 @@ describe('GET /api/articles', () => {
                 expect(article.votes).toEqual(expect.any(Number));
                 expect(article.comment_count).toEqual(expect.any(Number)); 
             })
+        })
+    });
+    it('Status: 200 and an array of object sorted by title in ascending order when given queries', () => {
+        return request(app)
+        .get('/api/articles?sortOn=title&order=ASC')
+        .expect(200)
+        .then(({ body }) => {
+            expect(Array.isArray(body)).toBe(true);
+            expect(body).toHaveLength(12);
+            expect(body).toBeSortedBy('title', {
+                ascending: true, 
+            })
+            body.forEach((article) => {
+                expect(article.author).toEqual(expect.any(String)); 
+                expect(article.title).toEqual(expect.any(String)); 
+                expect(article.article_id).toEqual(expect.any(Number));
+                expect(article.topic).toEqual(expect.any(String));
+                expect(article.created_at).toEqual(expect.any(String));
+                expect(article.votes).toEqual(expect.any(Number));
+                expect(article.comment_count).toEqual(expect.any(Number)); 
+            })
+        })
+    });
+    it('Status: 200 and an array of object sorted by comment_count in descending order when given queries ', () => {
+        return request(app)
+        .get('/api/articles?sortOn=comment_count&order=DESC')
+        .expect(200)
+        .then(({ body }) => {
+            expect(Array.isArray(body)).toBe(true);
+            expect(body).toHaveLength(12);
+            expect(body).toBeSortedBy('comment_count', {
+                descending: true,
+            })
+            body.forEach((article) => {
+                expect(article.author).toEqual(expect.any(String)); 
+                expect(article.title).toEqual(expect.any(String)); 
+                expect(article.article_id).toEqual(expect.any(Number));
+                expect(article.topic).toEqual(expect.any(String));
+                expect(article.created_at).toEqual(expect.any(String));
+                expect(article.votes).toEqual(expect.any(Number));
+                expect(article.comment_count).toEqual(expect.any(Number)); 
+            })
+        })
+    });
+    it('Status: 200 and an array of objects filtered by the input topic', () => {
+        return request(app)
+        .get('/api/articles?term=mitch&sortOn=votes&order=ASC')
+        .expect(200)
+        .then(({ body }) => {
+            expect(Array.isArray(body)).toBe(true);
+            expect(body).toHaveLength(11);
+            expect(body).toBeSortedBy('votes', {
+                ascending: true, 
+            })
+            body.forEach((article) => {
+                expect(article.author).toEqual(expect.any(String)); 
+                expect(article.title).toEqual(expect.any(String)); 
+                expect(article.article_id).toEqual(expect.any(Number));
+                expect(article.topic).toEqual('mitch');
+                expect(article.created_at).toEqual(expect.any(String));
+                expect(article.votes).toEqual(expect.any(Number));
+                expect(article.comment_count).toEqual(expect.any(Number)); 
+            })
+        })
+    });
+    it('Status: 400 and an error message when given an invalid sort query ', () => {
+        return request(app)
+        .get('/api/articles?sortOn=life&order=ASC')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Invalid sort query")
+        })
+    });
+    it('Status: 400 and an error message when given an invlaid order query', () => {
+        return request(app)
+        .get('/api/articles?sortOn=comment_count&order=YES')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe('Invalid order query')
+        })
+    });
+    it('Status: 404 and an error message if given a topic that does not exist on the database ', () => {
+        return request(app)
+        .get('/api/articles?term=oranges')
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Topic not found")
         })
     });
 });

@@ -7,11 +7,17 @@ const {
 	deleteCommentByCommentID,
 } = require("../models/article-models");
 
-const getArticles = (req, res) => {
-	fetchArticles().then((article) => {
-		res.status(200).send(article);
-	});
-};
+const getArticles = (req, res, next) => {
+    const { sortOn } = req.query; 
+    const { order } = req.query; 
+    const { term } = req.query; 
+    fetchArticles(sortOn, order, term)
+    .then((article) => {
+        res.status(200).send(article); 
+    }).catch((err) => {
+        next(err); 
+    })
+}
 
 const getArticleByArticleID = (req, res, next) => {
 	const id = req.params.article_id;
