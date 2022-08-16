@@ -92,7 +92,7 @@ const fetchArticles = (sortOn = 'created_at', order = 'DESC', term) => {
                 return rows; 
             })
         })
-    }
+    } 
 
     basicQuery += basicQuery2
 
@@ -211,12 +211,10 @@ const deleteCommentByCommentID = (comment_id) => {
     return checkCommentExists(comment_id)
     .then(() => {
         return db.query(`DELETE FROM comments WHERE comment_id = $1`, [comment_id])
-        .then(({ rows }) => {
-            return rows
+        .then(() => {
         })  
     })
 }
-
 
 module.exports = { fetchArticleByArticleID,
                     patchArticleByArticleID,

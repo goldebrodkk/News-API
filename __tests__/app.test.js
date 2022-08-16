@@ -53,7 +53,7 @@ describe('GET /api/users', () => {
 });
 
 describe('GET /api/articles', () => {
-    it('Status: 200 and an array of objects sorted by date in descending order when no queries are inputted', () => {
+    it('Status: 200 and an array of objects sorted by date in descending order when request contains no queries', () => {
         return request(app)
         .get('/api/articles')
         .expect(200)
@@ -74,7 +74,7 @@ describe('GET /api/articles', () => {
             })
         })
     });
-    it('Status: 200 and an array of object sorted by title in ascending order when given queries', () => {
+    it('Status: 200 and an array of object sorted by title in ascending order when request contains relevant sorting queries', () => {
         return request(app)
         .get('/api/articles?sortOn=title&order=ASC')
         .expect(200)
@@ -84,18 +84,9 @@ describe('GET /api/articles', () => {
             expect(body).toBeSortedBy('title', {
                 ascending: true, 
             })
-            body.forEach((article) => {
-                expect(article.author).toEqual(expect.any(String)); 
-                expect(article.title).toEqual(expect.any(String)); 
-                expect(article.article_id).toEqual(expect.any(Number));
-                expect(article.topic).toEqual(expect.any(String));
-                expect(article.created_at).toEqual(expect.any(String));
-                expect(article.votes).toEqual(expect.any(Number));
-                expect(article.comment_count).toEqual(expect.any(Number)); 
-            })
         })
     });
-    it('Status: 200 and an array of object sorted by comment_count in descending order when given queries ', () => {
+    it('Status: 200 and an array of object sorted by comment_count in descending order when request contains relevant sorting queries ', () => {
         return request(app)
         .get('/api/articles?sortOn=comment_count&order=DESC')
         .expect(200)
@@ -105,18 +96,9 @@ describe('GET /api/articles', () => {
             expect(body).toBeSortedBy('comment_count', {
                 descending: true,
             })
-            body.forEach((article) => {
-                expect(article.author).toEqual(expect.any(String)); 
-                expect(article.title).toEqual(expect.any(String)); 
-                expect(article.article_id).toEqual(expect.any(Number));
-                expect(article.topic).toEqual(expect.any(String));
-                expect(article.created_at).toEqual(expect.any(String));
-                expect(article.votes).toEqual(expect.any(Number));
-                expect(article.comment_count).toEqual(expect.any(Number)); 
-            })
         })
     });
-    it('Status: 200 and an array of objects filtered by the input topic', () => {
+    it('Status: 200 and an array of objects filtered by the input topic when request contains relevant filtering queries', () => {
         return request(app)
         .get('/api/articles?term=mitch&sortOn=votes&order=ASC')
         .expect(200)
@@ -127,17 +109,11 @@ describe('GET /api/articles', () => {
                 ascending: true, 
             })
             body.forEach((article) => {
-                expect(article.author).toEqual(expect.any(String)); 
-                expect(article.title).toEqual(expect.any(String)); 
-                expect(article.article_id).toEqual(expect.any(Number));
                 expect(article.topic).toEqual('mitch');
-                expect(article.created_at).toEqual(expect.any(String));
-                expect(article.votes).toEqual(expect.any(Number));
-                expect(article.comment_count).toEqual(expect.any(Number)); 
             })
         })
     });
-    it('Status: 400 and an error message when given an invalid sort query ', () => {
+    it('Status: 400 and an error message when request contains an invalid sort query ', () => {
         return request(app)
         .get('/api/articles?sortOn=life&order=ASC')
         .expect(400)
@@ -145,7 +121,7 @@ describe('GET /api/articles', () => {
             expect(body.msg).toBe("Invalid sort query")
         })
     });
-    it('Status: 400 and an error message when given an invlaid order query', () => {
+    it('Status: 400 and an error message when request contains an invalid order query', () => {
         return request(app)
         .get('/api/articles?sortOn=comment_count&order=YES')
         .expect(400)
@@ -180,7 +156,7 @@ describe('GET api/article/:article_id', () => {
             expect(body.comment_count).toEqual(11); 
         })
     });
-    it('Status: 404 and an error message when given a valid Id that does not exist in the database', () => {
+    it('Status: 404 and an error message when request contains a valid ID that does not exist in the database', () => {
         return request(app)
         .get('/api/articles/1000')
         .expect(404)
@@ -188,7 +164,7 @@ describe('GET api/article/:article_id', () => {
             expect(body.msg).toBe("No article found for article_id: 1000")
         })
     });
-    it('Status: 400 and an error message when given an invalid id', () => {
+    it('Status: 400 and an error message when request contains an invalid id', () => {
         return request(app)
         .get('/api/articles/dogs')
         .expect(400)
@@ -224,7 +200,7 @@ describe('GET /api/articles/:article_id/comments', () => {
             expect(body).toHaveLength(0); 
         })
     });
-    it('Status: 404 and an error message if given a valid ID that does not exist on the database', () => {
+    it('Status: 404 and an error message if request contains a valid ID that does not exist on the database', () => {
         return request(app)
         .get('/api/articles/9999/comments')
         .expect(404)
@@ -232,7 +208,7 @@ describe('GET /api/articles/:article_id/comments', () => {
             expect(body.msg).toBe("No article found for article_id: 9999")
         })
     });
-    it('Status: 400 and an error message when given an invalid ID', () => {
+    it('Status: 400 and an error message when request contains an invalid ID', () => {
         return request(app)
         .get('/api/articles/dogs/comments')
         .expect(400)
@@ -258,7 +234,7 @@ describe('PATCH /api/articles/:article_id', () => {
             expect(body.votes).toBe(200);
         })
     });
-    it('Status: 400 and an error message if the patch request is missing the required fields', () => {
+    it('Status: 400 and an error message if the request is missing the required fields', () => {
         return request(app)
         .patch('/api/articles/1')
         .send({other_things: "yes"})
@@ -267,7 +243,7 @@ describe('PATCH /api/articles/:article_id', () => {
             expect(body.msg).toBe("Missing required fields")
         })
     });
-    it('Status: 400 and an error message if the patch request is of the incorrect type', () => {
+    it('Status: 400 and an error message if the request is of the incorrect data type', () => {
         return request(app)
         .patch('/api/articles/1')
         .send({ inc_votes: "dog" })
@@ -276,7 +252,7 @@ describe('PATCH /api/articles/:article_id', () => {
             expect(body.msg).toBe("Request contains invalid type"); 
         })
     });
-    it('Status: 404 and an error message when given a valid Id that does not exist in the database', () => {
+    it('Status: 404 and an error message when request contains a valid Id that does not exist in the database', () => {
         return request(app)
         .patch('/api/articles/1000')
         .send({ inc_votes: 100 })
@@ -285,7 +261,7 @@ describe('PATCH /api/articles/:article_id', () => {
             expect(body.msg).toBe("No article found for article_id: 1000")
         })
     });
-    it('Status: 400 and an error message when given an invalid id', () => {
+    it('Status: 400 and an error message when request contains an invalid id', () => {
         return request(app)
         .patch('/api/articles/dogs')
         .send({ inc_votes: 100 })
@@ -315,7 +291,7 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(body.comment_id).toBe(19);
         })
     });
-    it('Status: 404 and a error message when given a valid id that is no tin the database', () => {
+    it('Status: 404 and a error message when request contains a valid id that is not in the database', () => {
         return request(app)
         .post('/api/articles/9999/comments')
         .send({ 
@@ -327,7 +303,7 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(body.msg).toBe(`No article found for article_id: 9999`); 
         })
     });
-    it('Status: 400 and an error message when given an invalid id', () => {
+    it('Status: 400 and an error message when request contains an invalid id', () => {
         return request(app)
         .post('/api/articles/dogs/comments')
         .send({ 
@@ -339,7 +315,7 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(body.msg).toBe("Request contains invalid type"); 
         })
     });
-    it('Status: 400 and an error message if the post request is missing the required fields', () => {
+    it('Status: 400 and an error message if the request is missing the required fields', () => {
         return request(app)
         .post('/api/articles/1/comments')
         .send({other_things: "yes"})
@@ -365,12 +341,8 @@ describe('DELETE /api/comments/:comment_id', () => {
         return request(app)
         .delete('/api/comments/1')
         .expect(204)
-        .then(({ body }) => {
-            expect(typeof body).toBe('object'); 
-            expect(body).toEqual({});  
-        })
     });
-    it('Status: 404 and an error message when given a valid id that does not exist on the database', () => {
+    it('Status: 404 and an error message when request contains a valid id that does not exist on the database', () => {
         return request(app)
         .delete('/api/comments/999')
         .expect(404)
@@ -378,7 +350,7 @@ describe('DELETE /api/comments/:comment_id', () => {
             expect(body.msg).toBe("Comment not found"); 
         })
     });
-    it('Status: 400 and an error message when given in invalid id', () => {
+    it('Status: 400 and an error message when request contains an invalid id', () => {
         return request(app)
         .delete('/api/comments/cats')
         .expect(400)

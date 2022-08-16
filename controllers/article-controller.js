@@ -68,8 +68,8 @@ const postCommentByArticleID = (req, res, next) => {
 
 const removeCommentByCommentID = (req, res, next) => {
 	const { comment_id } = req.params;
-	deleteCommentByCommentID(comment_id).then((content) => {
-        res.status(204).send(content); 
+	deleteCommentByCommentID(comment_id).then(() => {
+        res.status(204).send(); 
     }).catch((err) => {
         next(err); 
     })
