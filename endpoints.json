@@ -1,27 +1,107 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
-  },
+    "description": "serves a json representation of all the available endpoints of the api"
+  }, 
   "GET /api/topics": {
-    "description": "serves an array of all topics",
-    "queries": [],
+    "description": "serves an array of all topics", 
     "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
+      "topics": [{"slug": "coding", 
+                  "description": "Code is love, code is life"}]
+    }
+  }, 
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "exampleResponse": {
+      "users": {
+        "username": "tickle122", 
+        "name": "Tom Tickle", 
+        "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+      }
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "serves an array of all articles", 
+    "sortOnQueries": ["author", "title", "article_id", "topic", "created_at", "votes", "comment-count"], 
+    "orderQueries": ["ASC", "DESC"], 
+    "filterTerms": ["topic"], 
+    "exampleRequest": "/api/articles?term=mitch&sortOn=votes&order=ASC", 
     "exampleResponse": {
-      "articles": [
-        {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341
-        }
-      ]
+      "articles": {
+        "title": "The Notorious MSG’s Unlikely Formula For Success",
+        "topic": "cooking",
+        "author": "grumpy19",
+        "created_at": "2020-11-22T11:13:00.000Z",
+        "votes": 0,
+        "article_id": 34,
+        "comment_count": 11
+      }
     }
+  }, 
+  "GET /api/articles/:article_id": {
+    "description": "serves an object containing the article with the requested ID", 
+    "exampleRequest": "/api/articles/1", 
+    "exampleResponse": {
+      "article": {
+        "title": "Running a Node App",
+	      "topic": "coding",
+	      "author": "jessjelly",
+	      "created_at": "2020-11-07T06:03:00.000Z",
+	      "votes": 0,
+	      "body": "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
+	      "article_id": 1,
+	      "comment_count": 8
+      }
+    }
+  }, 
+  "PATCH /api/articles/:article_id": {
+    "description": "updates the votes property of the article with the requested ID", 
+    "exampleRequest": "/api/articles/1",
+    "exampleRequestBody": {"inc_votes": 50}, 
+    "exampleResponse": {
+      "article": {
+        "title": "Running a Node App",
+	      "topic": "coding",
+	      "author": "jessjelly",
+	      "created_at": "2020-11-07T06:03:00.000Z",
+	      "votes": 50,
+	      "body": "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
+	      "article_id": 1,
+	      "comment_count": 8
+      }
+    }
+  }, 
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array containing all the comments for the article with the requested ID", 
+    "exampleRequest": "/api/articles/1/comments", 
+    "exampleResponse": {
+      "comments": {
+        "comment_id": 85,
+		    "votes": 0,
+		    "created_at": "2020-08-23T01:14:00.000Z",
+		    "author": "happyamy2016",
+		    "body": "Assumenda sit est blanditiis asperiores est minima. Placeat sequi tenetur autem consequatur soluta molestiae. Incidunt neque labore et dolorem et vel possimus nemo quidem."
+      }
+    }
+  }, 
+  "POST /api/articles/:article_id/comments": {
+    "description": "posts a comment to the article with the requested article id", 
+    "exampleRequest": "/api/articles/1/comments", 
+    "exampleRequestBody": {
+      "username": "butter_bridge", 
+      "body": "What a fabulous article"
+    }, 
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 21, 
+        "votes": 0, 
+        "created_at": "2020-08-23T01:14:00.000Z",
+        "author": "butter_bridge", 
+        "body": "What a fabulous article" 
+      }
+    }
+  }, 
+  "DELETE /api/comments/comment_id": {
+    "description": "deletes the comment with the requested comment_id", 
+    "exampleRequest": "/api/comments/12"
   }
 }

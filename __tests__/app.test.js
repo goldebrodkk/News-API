@@ -148,6 +148,7 @@ describe('GET api/article/:article_id', () => {
         .then(({ body }) => {
             expect(typeof body).toBe("object"); 
             expect(body.article_id).toBe(1); 
+            expect(body.body).toBe("I find this existence challenging")
             expect(body.title).toEqual('Living in the shadow of a great man'); 
             expect(body.topic).toEqual('mitch');
             expect(body.author).toEqual('butter_bridge'); 
