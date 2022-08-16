@@ -19,6 +19,14 @@ describe('GET error all paths', () => {
     });
 });
 
+describe('GET /api', () => {
+    it('Status: 200 and a json object containing all available endpoints', () => {
+        return request(app)
+        .get('/api')
+        .expect(200)
+    });
+});
+
 describe('GET /api/topics', () => {
     it('Status: 200 and an array of objects', () => {
         return request(app)

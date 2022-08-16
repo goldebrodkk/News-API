@@ -1,5 +1,4 @@
 const express = require('express'); 
-
 const { getTopics } = require('./controllers/topic-controller'); 
 const { getUsers } = require('./controllers/user-controller')
 const { getArticleByArticleID, 
@@ -8,11 +7,16 @@ const { getArticleByArticleID,
         getCommentsByArticleID, 
         postCommentByArticleID,
         removeCommentByCommentID, } = require('./controllers/article-controller')
+const endpoints = require('./endpoints.json')
 
 
 const app = express(); 
 
 app.use(express.json()); 
+
+app.get('/api', (req, res, next) => {
+    res.status(200).send(endpoints); 
+})
 
 app.get('/api/topics', getTopics); 
 
