@@ -1,5 +1,5 @@
 const app = require('./app.js'); 
 
-const { PORT } = process.env; 
+const { PORT = 9090 } = process.env; 
 
 app.listen(PORT); 

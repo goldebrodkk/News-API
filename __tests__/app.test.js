@@ -60,6 +60,32 @@ describe('GET /api/users', () => {
     });
 });
 
+describe('GET /api/users/:username', () => {
+    it('Status: 200 and a user object when request contains a valid username contained in the database', () => {
+        return request(app)
+        .get('/api/users/butter_bridge')
+        .expect(200)
+        .then(({ body }) => {
+            expect(typeof body).toBe('object'); 
+            expect(body.username).toBe('butter_bridge'); 
+            expect(body.avatar_url).toBe('https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg');
+            expect(body.name).toBe('jonny')
+        })
+    });
+    it('Status: 404 and an error message when the request contains a valid username that does not exist on the database', () => {
+        return request(app)
+        .get('/api/users/theman')
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe('No user found with username theman'); 
+        })
+    });
+    it('Status: 400 and an error message when request contains an invalid username type', () => {
+        return request(app)
+        .get('/api/users/0')
+    });
+});
+
 describe('GET /api/articles', () => {
     it('Status: 200 and an array of objects sorted by date in descending order when request contains no queries', () => {
         return request(app)
@@ -111,7 +137,6 @@ describe('GET /api/articles', () => {
         .get('/api/articles?term=mitch&sortOn=votes&order=ASC')
         .expect(200)
         .then(({ body }) => {
-            console.log(body);
             expect(Array.isArray(body)).toBe(true);
             expect(body).toHaveLength(11);
             expect(body).toBeSortedBy('votes', {
