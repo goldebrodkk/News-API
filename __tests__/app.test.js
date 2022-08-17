@@ -111,6 +111,7 @@ describe('GET /api/articles', () => {
         .get('/api/articles?term=mitch&sortOn=votes&order=ASC')
         .expect(200)
         .then(({ body }) => {
+            console.log(body);
             expect(Array.isArray(body)).toBe(true);
             expect(body).toHaveLength(11);
             expect(body).toBeSortedBy('votes', {
@@ -119,6 +120,14 @@ describe('GET /api/articles', () => {
             body.forEach((article) => {
                 expect(article.topic).toEqual('mitch');
             })
+        })
+    });
+    it('Status: 200 and an empty array when valid topic has no articles', () => {
+        return request(app)
+        .get('/api/articles?term=paper')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body).toEqual([]); 
         })
     });
     it('Status: 400 and an error message when request contains an invalid sort query ', () => {

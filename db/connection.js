@@ -16,6 +16,4 @@ if (ENV === "production") {
    (config.ssl = { rejectUnauthorized: false }); 
 }
 
-console.log(config); 
-
 module.exports = new Pool(config);

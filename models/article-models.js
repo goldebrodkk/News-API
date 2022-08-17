@@ -16,8 +16,6 @@ const fetchArticles = (sortOn = 'created_at', order = 'DESC', term) => {
     let basicQuery = `SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_id, 
     (SELECT COUNT(comment_id) :: INT) AS comment_count 
      FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id `
-     let basicQuery2 = `
-     GROUP BY articles.article_id`;
 
      if (!["title", "author", "article_id", "created_at", "votes", "comment_count", "topic"].includes(sortOn)) {
         return Promise.reject({
@@ -31,75 +29,25 @@ const fetchArticles = (sortOn = 'created_at', order = 'DESC', term) => {
             msg: "Invalid order query"
         })
     }
-    
-    switch (sortOn) {
-        case "title":
-            if (order === "DESC") {
-                basicQuery2 += ' ORDER BY title DESC;'
-            } else if (order === "ASC") {
-                basicQuery2 += ' ORDER BY title ASC;'
-            }
-            break;
-        case "author": 
-            if (order == "DESC") {
-                basicQuery2 += ' ORDER BY author DESC;'
-            } else if (order === "ASC") {
-                basicQuery2 += ' ORDER BY author ASC;'
-            }
-            break; 
-        case "article_id": 
-            if (order === "DESC") {
-                basicQuery2 += ' ORDER BY article_id DESC;'
-            } else if (order === "ASC") {
-                basicQuery2 += ' ORDER BY article_id ASC;'
-            }
-            break; 
-        case "created_at": 
-            if (order === "DESC") {
-                basicQuery2 += ' ORDER BY created_at DESC;'
-            } else if (order === "ASC") {
-                basicQuery2 += ' ORDER BY created_at ASC;'
-            }
-            break;
-        case "votes": 
-            if (order === "DESC") {
-                basicQuery2 += ' ORDER BY votes DESC;'
-            } else if (order === "ASC") {
-                basicQuery2 += ' ORDER BY votes ASC;'
-            }
-            break; 
-        case "comment_count": 
-            if (order === "DESC") {
-                basicQuery2 += ' ORDER BY comment_count DESC;'
-            } else if (order === "ASC") {
-                basicQuery2 += ' ORDER BY comment_count ASC;'
-            }
-            break; 
-        case "topic": 
-            if (order === "DESC") {
-                basicQuery2 += ' ORDER BY topic DESC;'
-            } else if (order === "ASC") {
-                basicQuery2 += ' ORDER BY topic ASC;'
-            }
-    }
+    let basicQuery2 = `
+     GROUP BY articles.article_id ORDER BY ${sortOn} ${order}`;
 
     if (term) {
        return checkTopicExists(term).then(() => {
             basicQuery += ` WHERE articles.topic = '${term}' `
             basicQuery += basicQuery2; 
+        }).then(() => {
             return db.query(basicQuery)
-            .then(({ rows }) => {
-                return rows; 
-            })
+        }).then(({ rows }) => {
+            return rows; 
         })
-    } 
-
-    basicQuery += basicQuery2
-
-    return db.query(basicQuery)
-    .then(({ rows }) => {
+    } else { 
+        basicQuery += basicQuery2
+        return db.query(basicQuery)
+        .then(({ rows }) => {
         return rows;
     })
+  }
 }
 
 const fetchArticleByArticleID = (id) => {
@@ -184,15 +132,14 @@ const insertCommentByArticleID = (article_id, username, body) => {
             msg: 'Missing required fields'
         })
     } 
-return checkArticleExists(article_id).then(() => {
-    return checkUserExists(username).then(() => {
-  return db.query(`INSERT INTO comments (article_id, author, body) 
+    return checkArticleExists(article_id).then(() => {
+        return checkUserExists(username)
+    }).then(() => {
+        return db.query(`INSERT INTO comments (article_id, author, body) 
               VALUES ($1, $2, $3) RETURNING *`, [article_id, username, body])
-    .then(({ rows: [comment] }) => {
-        return comment;
+    }).then(({ rows: [comment] }) => {
+        return comment; 
     })
-  })
-})
 }
 
 const checkCommentExists = (comment_id) => {
@@ -210,9 +157,7 @@ const checkCommentExists = (comment_id) => {
 const deleteCommentByCommentID = (comment_id) => {
     return checkCommentExists(comment_id)
     .then(() => {
-        return db.query(`DELETE FROM comments WHERE comment_id = $1`, [comment_id])
-        .then(() => {
-        })  
+        return db.query(`DELETE FROM comments WHERE comment_id = $1`, [comment_id]) 
     })
 }
 
