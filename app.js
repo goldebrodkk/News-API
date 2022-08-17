@@ -3,10 +3,10 @@ const { getTopics } = require('./controllers/topic-controller');
 const { getUsers } = require('./controllers/user-controller')
 const { getArticleByArticleID, 
         updateArticleByArticleID, 
-        getArticles, 
-        getCommentsByArticleID, 
+        getArticles } = require('./controllers/article-controller')
+const { getCommentsByArticleID,
         postCommentByArticleID,
-        removeCommentByCommentID, } = require('./controllers/article-controller')
+        removeCommentByCommentID } = require('./controllers/comment-controller')
 const endpoints = require('./endpoints.json')
 
 
