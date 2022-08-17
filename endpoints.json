@@ -12,9 +12,20 @@
   "GET /api/users": {
     "description": "serves an array of all users",
     "exampleResponse": {
-      "users": {
+      "users": [{
         "username": "tickle122", 
         "name": "Tom Tickle", 
+        "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+      }]
+    }
+  },
+  "GET /api/users/:username": {
+    "description": "serves an object containing the user with the requested username", 
+    "exampleRequest": "/api/users/butter_bridge", 
+    "exampleResponse": {
+      "user": {
+        "username": "butter_bridge", 
+        "name": "jonny", 
         "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
       }
     }
@@ -26,7 +37,7 @@
     "filterTerms": ["topic"], 
     "exampleRequest": "/api/articles?term=mitch&sortOn=votes&order=ASC", 
     "exampleResponse": {
-      "articles": {
+      "articles": [{
         "title": "The Notorious MSG’s Unlikely Formula For Success",
         "topic": "cooking",
         "author": "grumpy19",
@@ -34,7 +45,7 @@
         "votes": 0,
         "article_id": 34,
         "comment_count": 11
-      }
+      }]
     }
   }, 
   "GET /api/articles/:article_id": {
@@ -74,13 +85,13 @@
     "description": "serves an array containing all the comments for the article with the requested ID", 
     "exampleRequest": "/api/articles/1/comments", 
     "exampleResponse": {
-      "comments": {
+      "comments": [{
         "comment_id": 85,
 		    "votes": 0,
 		    "created_at": "2020-08-23T01:14:00.000Z",
 		    "author": "happyamy2016",
 		    "body": "Assumenda sit est blanditiis asperiores est minima. Placeat sequi tenetur autem consequatur soluta molestiae. Incidunt neque labore et dolorem et vel possimus nemo quidem."
-      }
+      }]
     }
   }, 
   "POST /api/articles/:article_id/comments": {
