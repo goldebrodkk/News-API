@@ -379,6 +379,60 @@ describe('POST /api/articles/:article_id/comments', () => {
     });
 });
 
+describe('PATCH /api/comments/:comment_id', () => {
+    it('Status: 200 and an object containing the updated comment', () => {
+        return request(app)
+        .patch('/api/comments/1')
+        .send({inc_votes: 100})
+        .expect(200)
+        .then(({ body }) => {
+            expect(typeof body).toBe("object"); 
+            expect(body.comment_id).toBe(1); 
+            expect(body.votes).toBe(116); 
+            expect(body.body).toBe("Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!");
+            expect(body.author).toBe("butter_bridge"); 
+            expect(body.created_at).toEqual(expect.any(String)); 
+            expect(body.article_id).toBe(9); 
+        })
+    })
+    it('Status: 400 and an error message if the request is missing the required fields', () => {
+        return request(app)
+        .patch('/api/comments/1')
+        .send({other_things: "yes"})
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Missing required fields")
+        })
+    });
+    it('Status: 400 and an error message if the request is of the incorrect data type', () => {
+        return request(app)
+        .patch('/api/comments/1')
+        .send({ inc_votes: "dog" })
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Request contains invalid type"); 
+        })
+    });
+    it('Status: 404 and an error message when request contains a valid Id that does not exist in the database', () => {
+        return request(app)
+        .patch('/api/comments/1000')
+        .send({ inc_votes: 100 })
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe("No comment found for comment_id: 1000")
+        })
+    });
+    it('Status: 400 and an error message when request contains an invalid id', () => {
+        return request(app)
+        .patch('/api/comments/dogs')
+        .send({ inc_votes: 100 })
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe("Request contains invalid type"); 
+        })
+    });
+});
+
 describe('DELETE /api/comments/:comment_id', () => {
     it('Status: 204 and no content upon succesful deletion', () => {
         return request(app)

@@ -7,7 +7,8 @@ const { getArticleByArticleID,
         getArticles } = require('./controllers/article-controller')
 const { getCommentsByArticleID,
         postCommentByArticleID,
-        removeCommentByCommentID } = require('./controllers/comment-controller');
+        removeCommentByCommentID,
+        updateCommentByCommentID } = require('./controllers/comment-controller');
 const { handlePsqlErrors,
         handleCustomErrors,
         handlePathErrors } = require('./errors/index')
@@ -35,6 +36,8 @@ app.get('/api/articles/:article_id', getArticleByArticleID);
 app.patch('/api/articles/:article_id', updateArticleByArticleID);
 
 app.get('/api/articles/:article_id/comments', getCommentsByArticleID);
+
+app.patch('/api/comments/:comment_id', updateCommentByCommentID); 
 
 app.post('/api/articles/:article_id/comments', postCommentByArticleID);
 
