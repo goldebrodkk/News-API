@@ -42,5 +42,5 @@ const updateArticleByArticleID = (req, res, next) => {
 module.exports = {
 	getArticleByArticleID,
 	updateArticleByArticleID,
-	getArticles,
+	getArticles
 };

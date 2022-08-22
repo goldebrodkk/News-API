@@ -1,5 +1,5 @@
 const db = require('../db/connection'); 
-const { checkTopicExists } = require('../db/check-functions')
+const { checkTopicExists, checkUserExists } = require('../db/check-functions')
 
 const fetchArticles = (sortOn = 'created_at', order = 'DESC', term) => {
     let basicQuery = `SELECT articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_id, 
@@ -79,4 +79,4 @@ const patchArticleByArticleID = (article_id, inc_votes) => {
 
 module.exports = { fetchArticleByArticleID,
                     patchArticleByArticleID,
-                    fetchArticles, }
+                    fetchArticles,}
