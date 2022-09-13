@@ -2,7 +2,7 @@
 
 ## Overview 
 
-Jake's News API is a back-end project built on the Northcoders full-stack development bootcamp. The project consists of a Node.js and Express server making requests to a PSQL database populated with sample data in a news/blog format.
+Jake's News API is a back-end project built on the Northcoders full-stack development bootcamp. The project consists of a Node.js and Express server making requests to a PSQL database populated with sample data in a news/blog format. The project also contains a full Jest testing suite with tests for each of the endpoints and associated errors. 
 
 The hosted version of this project can be found [here](https://jakes-news-api.herokuapp.com/api) with a list of available endpoints. 
 
@@ -69,3 +69,7 @@ To run the server locally please run:
 ```bash
 npm start
 ```
+
+With the server now running you will be able to interact with the server and make any of the requests that the project supports. 
+
+Thanks for taking a look at my project!
