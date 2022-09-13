@@ -9,6 +9,7 @@ The hosted version of this project can be found [here](https://jakes-news-api.he
 I have also built a front-end application that uses this API as the source of it's data, the links to both the hosted version and the repo on GitHub can be found below. 
 
 [GitHub repo](https://github.com/goldebrodkk/jakes-news-app)
+
 [Hosted version](https://jakes-news.netlify.app/)
 
 
